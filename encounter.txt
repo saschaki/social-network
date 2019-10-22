@@ -1,0 +1,3 @@
+node bundle-server.js            //no need to restart the whole day
+cmd + n open second terminal
+node .                          //start second server

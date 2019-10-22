@@ -6,7 +6,8 @@
     "scripts": {
         "build": "node build.js",
         "start": "node index.js",
-        "test": "jest"
+        "test": "jest",
+        "bothServer": "node bundle-server.js & node ."
     },
     "engines": {
         "node": "10.15.1"
