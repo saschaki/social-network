@@ -1,3 +1,15 @@
 node bundle-server.js            //no need to restart the whole day
 cmd + n open second terminal
 node .                          //start second server
+added
+    "bothServer": "node bundle-server.js & node ."
+to package.json
+can now start both server with
+    npm run bothServer
+
+//users table like petition + bio text + image
+//Logo 3rd component or image-tag
+
+//better for redirection (no backbutton) removes it from history
+location.replace("https://www.google.com")
+location.replace("/")
