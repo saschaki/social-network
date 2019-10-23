@@ -1,5 +1,4 @@
 import React from "react";
-import axios from "axios";
 
 export default class CuteAnimals extends React.Component {
     constructor(props) {

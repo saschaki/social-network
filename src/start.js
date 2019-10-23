@@ -10,14 +10,7 @@ const userIsLoggedIn = location.pathname != "/welcome";
 if (!userIsLoggedIn) {
     elem = <Welcome />;
 } else {
-    <iframe
-        src="https://giphy.com/gifs/film-cute-lol-26gs9ozI95iMvmbaE"
-        width="auto"
-        height="600px"
-        frameBorder="0"
-        className="giphy-embedded"
-        allowFullScreen
-    ></iframe>;
+    elem = <h1>Disconnect</h1>;
 }
 
 ReactDOM.render(elem, document.querySelector("main")); //points to <main> in index.html

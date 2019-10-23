@@ -3,13 +3,13 @@ const app = express();
 const compression = require("compression"); //compress responses (make them as small as possible)
 const port = 8080;
 const cookieSession = require("cookie-session");
-const { addUser } = require("./db");
-const { hash } = require("./bcrypt");
+const { addUser, getUser } = require("./db");
+const { hash, auth } = require("./bcrypt");
+const csurf = require("csurf");
 
 app.use(compression());
 app.use(express.static(`${__dirname}/public`));
 app.use(express.json());
-
 app.use(
     express.urlencoded({
         extended: false
@@ -27,6 +27,11 @@ app.use(
         maxAge: 1000 * 60 * 60 * 24 * 14
     })
 );
+app.use(csurf());
+app.use(function(req, res, next) {
+    res.cookie("mytoken", req.csrfToken());
+    next();
+});
 
 if (process.env.NODE_ENV != "production") {
     //tell local development server what to do
@@ -57,11 +62,9 @@ app.post("/register", (req, res) => {
             return addUser(first, last, email, password);
         })
         .then(result => {
-            console.log("post-register-worked");
-            const { user_id: userId, first, last, email } = result.rows[0];
-            console.log(">>", result.rows[0]);
-            req.session.user = { userId, first, last, email };
-            console.log(">>>", req.session.user);
+            const { user_id: userId } = result.rows[0];
+            //req.session.user = { userId, first, last, email };
+            req.session.userId = userId;
             res.json({
                 success: true
             });
@@ -72,12 +75,34 @@ app.post("/register", (req, res) => {
         });
 });
 
+app.post("/login", (req, res) => {
+    const { email, password } = req.body;
+    auth(email, password)
+        .then(auth => {
+            return !auth
+                ? Promise.reject(new Error("Incorrect password"))
+                : getUser(email);
+        })
+        .then(result => {
+            const { user_id: userId } = result.rows[0];
+            req.session.userId = userId;
+            //const { user } = req.session;
+            res.json({
+                success: true
+            });
+        })
+        .catch(err => {
+            console.log(err);
+            res.render("login", { error: true, err });
+        });
+});
+
 //* is a fallthrough route
 app.get("*", function(req, res) {
     if (!req.session.userId) {
         res.redirect("/welcome");
     } else {
-        res.sendFile(__dirname + "/success.html");
+        res.sendFile(__dirname + "/index.html");
     }
     //Do not delete this line of code !!!
     //this code is kicking off the react project

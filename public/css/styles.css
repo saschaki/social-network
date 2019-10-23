@@ -15,28 +15,39 @@ body {
     margin: 0;
 }
 
+main {
+    display: grid;
+}
+
 .input-container {
-    position: absolute;
+    /*position: absolute;*/
     display: flex;
     flex-direction: column;
     left: 50%;
     top: 50%;
-    /*transform: translate(50%, 50%);*/
+    transform: translate(50%, 50%);
 }
 
 input {
-    width: 80px;
+    width: 150px;
+    height: 40px;
+    margin: 5px;
+    border-radius: 10px;
 }
 
 button {
 }
 
 .register-button {
+    position: relative;
     background-color: red;
     color: white;
     padding: 5px;
     width: 70px;
     border-radius: 10px;
+    justify-content: center;
+    text-align: center;
+    left: 35px;
 }
 
 button:hover,

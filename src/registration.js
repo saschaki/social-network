@@ -1,7 +1,8 @@
 import React from "react";
-import axios from "axios";
+import axios from "./axios";
+import { Link } from "react-router-dom";
 
-export default class Register extends React.Component {
+export default class Registration extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -10,7 +11,7 @@ export default class Register extends React.Component {
     }
 
     componentDidMount() {
-        console.log("register mounted");
+        console.log("registration mounted");
     }
 
     handleChange({ target }) {
@@ -40,12 +41,12 @@ export default class Register extends React.Component {
                 }
             });
     }
-
+    /*
     login() {
         console.log("login");
         location.replace("/login"); //worked
     }
-
+*/
     render() {
         return (
             <div className="container">
@@ -93,10 +94,7 @@ export default class Register extends React.Component {
                         Register
                     </button>
                     <p>
-                        Already a member ?{" "}
-                        <a href="" onClick={() => this.login()}>
-                            Log in
-                        </a>
+                        Already a member ? <Link to="/login">Log in!</Link>
                     </p>
                 </div>
             </div>

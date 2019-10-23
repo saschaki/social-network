@@ -16,6 +16,22 @@ function addUser(first, last, email, password) {
     );
 }
 
+function getUser(email) {
+    return db.query(
+        `SELECT id AS user_id, first AS first, last AS last, email AS email
+      FROM users
+      WHERE email = $1;`,
+        [email]
+    );
+}
+function getHashPassword(email) {
+    return db.query("SELECT password As hash FROM users WHERE email = $1", [
+        email
+    ]);
+}
+
 module.exports = {
-    addUser
+    addUser,
+    getUser,
+    getHashPassword
 };
