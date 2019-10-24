@@ -6,7 +6,11 @@ export default class Registration extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            error: null
+            error: null,
+            first: "",
+            last: "",
+            email: "",
+            password: ""
         };
     }
 
@@ -41,19 +45,13 @@ export default class Registration extends React.Component {
                 }
             });
     }
-    /*
-    login() {
-        console.log("login");
-        location.replace("/login"); //worked
-    }
-*/
+
     render() {
         return (
-            <div className="container">
+            <div className="form-container">
                 {this.state.error && (
                     <div className="error">You ruined everything ! !</div>
                 )}
-                <h1>Welcome to the social Network </h1>
                 <div className="input-container">
                     <input
                         name="first"

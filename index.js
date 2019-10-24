@@ -3,9 +3,32 @@ const app = express();
 const compression = require("compression"); //compress responses (make them as small as possible)
 const port = 8080;
 const cookieSession = require("cookie-session");
-const { addUser, getUser } = require("./db");
+const { addUser, getUser, getImage, addImage } = require("./db");
 const { hash, auth } = require("./bcrypt");
 const csurf = require("csurf");
+const multer = require("multer");
+const uidSafe = require("uid-safe");
+const path = require("path");
+const s3 = require("./s3");
+const { s3Url } = require("./config");
+
+const diskStorage = multer.diskStorage({
+    destination: function(req, file, callback) {
+        callback(null, __dirname + "/uploads");
+    },
+    filename: function(req, file, callback) {
+        uidSafe(24).then(function(uid) {
+            callback(null, uid + path.extname(file.originalname));
+        });
+    }
+});
+
+const uploader = multer({
+    storage: diskStorage,
+    limits: {
+        fileSize: 4097152
+    }
+});
 
 app.use(compression());
 app.use(express.static(`${__dirname}/public`));
@@ -95,6 +118,11 @@ app.post("/login", (req, res) => {
             console.log(err);
             res.render("login", { error: true, err });
         });
+});
+
+app.get("logout", function(req, res) {
+    req.session.userId = null;
+    res.redirect("/");
 });
 
 //* is a fallthrough route

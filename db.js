@@ -30,8 +30,28 @@ function getHashPassword(email) {
     ]);
 }
 
+function getImage(id) {
+    return db.query(`SELECT url FROM users WHERE $1 = id`, [id]);
+}
+
+function addImage(imageUrl) {
+    return db
+        .query(
+            `
+        INSERT INTO user (url) VALUES ($1) WHERE $1 = id RETURNING url;
+        `,
+            [imageUrl]
+        )
+        .catch(err => {
+            console.log(err);
+            return Promise.reject(new Error("Can't insert image"));
+        });
+}
+
 module.exports = {
     addUser,
     getUser,
-    getHashPassword
+    getHashPassword,
+    getImage,
+    addImage
 };
