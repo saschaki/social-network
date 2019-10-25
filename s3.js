@@ -32,13 +32,13 @@ exports.upload = function(req, res, next) {
     })
         .promise()
         .then(() => {
-            console.log("worked");
+            console.log("s3 worked");
             //worked
             next();
         })
         .catch(err => {
             //uh oh
-            console.log(err);
+            console.log("s3 error", err);
             res.sendStatus(500);
         });
 };

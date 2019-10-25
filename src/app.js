@@ -1,46 +1,53 @@
 import React from "react";
-import { ProfilePic } from "./profile-pic";
 import Uploader from "./uploader";
+import axios from "./axios";
+import ProfilePic from "./profile-pic";
+//import Profile from "./profile";
 
-export class App extends React.Component {
+export default class App extends React.Component {
     constructor() {
         super();
         this.state = {
-            first: "Sascha",
-            last: "Kiefer",
-            img: "",
+            first: "",
+            last: "",
+            image: "",
+            bio: "",
+            file: null,
             uploaderIsVisible: false
         };
+        this.methodInApp = this.methodInApp.bind(this);
     }
 
-    componentDidMount() {
-        console.log("App mounted");
-        // this is where we want to make an axios requests
-        // a get request to a route called "/users"
-        // when we get a response we want to put the inspect
-        // into setState this.setState()
+    async componentDidMount() {
+        const { data } = await axios.get("/user");
+        this.setState(data);
+        console.log("state", this.state);
     }
 
     toggleModal() {
-        console.log("i am toggle modal...");
         this.setState({ uploaderIsVisible: !this.state.uploaderIsVisible });
     }
 
-    methodInApp(muffin) {
-        console.log("im a method in app");
-        console.log("muffin", muffin);
-        //this.setState({ muffin: muffin });
+    methodInApp(newUrl) {
+        this.setState({ image: newUrl });
     }
+
+    setImage() {}
+
+    setBio() {}
 
     render() {
         return (
             <React.Fragment>
-                <h1 onClick={this.toggleModal.bind(this)}>Hello from App</h1>
-                <ProfilePic
-                    firstName={this.state.first}
-                    lastName={this.state.last}
-                    imgUrl={this.state.img}
-                />
+                <div className="navbar">
+                    <ProfilePic
+                        toggleModal={() => this.toggleModal()}
+                        firstName={this.state.first}
+                        lastName={this.state.last}
+                        image={this.state.image}
+                    />
+                    <h1 className="">Disconnect</h1>
+                </div>
                 {this.state.uploaderIsVisible && (
                     <Uploader methodInApp={this.methodInApp} />
                 )}

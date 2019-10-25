@@ -3,7 +3,7 @@ const app = express();
 const compression = require("compression"); //compress responses (make them as small as possible)
 const port = 8080;
 const cookieSession = require("cookie-session");
-const { addUser, getUser, getImage, addImage } = require("./db");
+const { addUser, getUser, addImage } = require("./db");
 const { hash, auth } = require("./bcrypt");
 const csurf = require("csurf");
 const multer = require("multer");
@@ -118,6 +118,29 @@ app.post("/login", (req, res) => {
             console.log(err);
             res.render("login", { error: true, err });
         });
+});
+
+app.post("/upload", uploader.single("image"), s3.upload, (req, res) => {
+    console.log("uploadreqfile", req.file);
+    console.log("fullfilepath", req.file.path);
+    const url = `${s3Url}${req.file.filename}`;
+    console.log("uploadtest", req.session.userId, url);
+    addImage(req.session.userId, url)
+        .then(({ rows }) => {
+            console.log(rows);
+            res.json(rows);
+        })
+        .catch(err => {
+            console.log(err);
+            res.sendStatus(500);
+        });
+});
+
+app.get("/user", (req, res) => {
+    console.log("getuser");
+    getUser(req.session.userId).then(({ rows }) => {
+        res.json(rows[0]);
+    });
 });
 
 app.get("logout", function(req, res) {

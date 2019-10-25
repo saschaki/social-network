@@ -1,12 +1,21 @@
 import React from "react";
-//props now destructured
-export function ProfilePic({ firstName, lastName, imgUrl }) {
-    console.log(firstName, lastName, imgUrl);
-    imgUrl = imgUrl || "/img/default.png";
+export default function ProfilePic({
+    firstName,
+    lastName,
+    image,
+    toggleModal
+}) {
+    console.log("profilepic", firstName, lastName, image);
+    image = image || "/img/default.png";
     return (
         <React.Fragment>
             <div className="profile-pic-container">
-                <img src={imgUrl} alt={lastName} className="profile-pic" />
+                <img
+                    src={image}
+                    alt={(firstName, lastName)}
+                    className="profile-pic"
+                    onClick={toggleModal}
+                />
                 <h2>{firstName}</h2>
             </div>
         </React.Fragment>

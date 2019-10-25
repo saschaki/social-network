@@ -16,12 +16,12 @@ function addUser(first, last, email, password) {
     );
 }
 
-function getUser(email) {
+function getUser(id) {
     return db.query(
-        `SELECT id AS user_id, first AS first, last AS last, email AS email
-      FROM users
-      WHERE email = $1;`,
-        [email]
+        `
+         SELECT * FROM users
+         WHERE id= $1`,
+        [id]
     );
 }
 function getHashPassword(email) {
@@ -31,16 +31,22 @@ function getHashPassword(email) {
 }
 
 function getImage(id) {
-    return db.query(`SELECT url FROM users WHERE $1 = id`, [id]);
+    return db.query(`SELECT image FROM users WHERE $1 = id`, [id]);
 }
 
-function addImage(imageUrl) {
+function getLoginId(email) {
+    return db.query("SELECT id FROM users WHERE email = $1", [email]);
+}
+
+function addImage(id, image) {
     return db
         .query(
             `
-        INSERT INTO user (url) VALUES ($1) WHERE $1 = id RETURNING url;
+        UPDATE users SET image=$2
+        WHERE id =$1
+        Returning image
         `,
-            [imageUrl]
+            [id, image]
         )
         .catch(err => {
             console.log(err);
@@ -53,5 +59,6 @@ module.exports = {
     getUser,
     getHashPassword,
     getImage,
-    addImage
+    addImage,
+    getLoginId
 };
