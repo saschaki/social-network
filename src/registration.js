@@ -21,7 +21,6 @@ export default class Registration extends React.Component {
     }
 
     submit() {
-        console.log("submitted");
         axios
             .post("/register", {
                 first: this.state.first,

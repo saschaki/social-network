@@ -30,7 +30,6 @@ export default class Login extends React.Component {
             })
             .then(({ data }) => {
                 if (data.success) {
-                    console.log("login-success");
                     location.replace("/"); //worked
                 } else {
                     this.setState({

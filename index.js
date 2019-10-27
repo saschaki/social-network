@@ -3,7 +3,7 @@ const app = express();
 const compression = require("compression"); //compress responses (make them as small as possible)
 const port = 8080;
 const cookieSession = require("cookie-session");
-const { addUser, getUser, addImage } = require("./db");
+const { addUser, getUser, addImage, editBio } = require("./db");
 const { hash, auth } = require("./bcrypt");
 const csurf = require("csurf");
 const multer = require("multer");
@@ -79,7 +79,6 @@ app.get("/welcome", function(req, res) {
 
 app.post("/register", (req, res) => {
     const { first, last, email, password } = req.body;
-    console.log("reqbody", req.body);
     hash(password)
         .then(password => {
             return addUser(first, last, email, password);
@@ -121,13 +120,9 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/upload", uploader.single("image"), s3.upload, (req, res) => {
-    console.log("uploadreqfile", req.file);
-    console.log("fullfilepath", req.file.path);
     const url = `${s3Url}${req.file.filename}`;
-    console.log("uploadtest", req.session.userId, url);
     addImage(req.session.userId, url)
         .then(({ rows }) => {
-            console.log(rows);
             res.json(rows);
         })
         .catch(err => {
@@ -137,7 +132,6 @@ app.post("/upload", uploader.single("image"), s3.upload, (req, res) => {
 });
 
 app.get("/user", (req, res) => {
-    console.log("getuser");
     getUser(req.session.userId).then(({ rows }) => {
         res.json(rows[0]);
     });
@@ -146,6 +140,18 @@ app.get("/user", (req, res) => {
 app.get("logout", function(req, res) {
     req.session.userId = null;
     res.redirect("/");
+});
+
+app.post("/editbio", (req, res) => {
+    editBio(req.session.userId, req.body.bio)
+        .then(({ rows }) => {
+            console.log("editbio:", rows);
+            res.json(rows[0]);
+        })
+        .catch(err => {
+            console.log("editbio", err);
+            res.sendStatus(500);
+        });
 });
 
 //* is a fallthrough route

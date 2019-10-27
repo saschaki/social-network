@@ -49,8 +49,24 @@ function addImage(id, image) {
             [id, image]
         )
         .catch(err => {
-            console.log(err);
+            console.log("addImage-error : ", err);
             return Promise.reject(new Error("Can't insert image"));
+        });
+}
+
+function editBio(id, bio) {
+    return db
+        .query(
+            `
+        UPDATE users SET bio=$2
+        WHERE id =$1
+        RETURNING bio
+        `,
+            [id, bio]
+        )
+        .catch(err => {
+            console.log("editBio-error : ", err);
+            return Promise.reject(new Error("Can't edit bio"));
         });
 }
 
@@ -60,5 +76,6 @@ module.exports = {
     getHashPassword,
     getImage,
     addImage,
-    getLoginId
+    getLoginId,
+    editBio
 };

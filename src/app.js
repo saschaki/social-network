@@ -1,8 +1,7 @@
 import React from "react";
 import Uploader from "./uploader";
 import axios from "./axios";
-import ProfilePic from "./profile-pic";
-//import Profile from "./profile";
+import Profile from "./profile";
 
 export default class App extends React.Component {
     constructor() {
@@ -15,41 +14,46 @@ export default class App extends React.Component {
             file: null,
             uploaderIsVisible: false
         };
-        this.methodInApp = this.methodInApp.bind(this);
+        this.setImage = this.setImage.bind(this);
+        this.setBio = this.setBio.bind(this);
+        this.showUploader = this.showUploader.bind(this);
     }
 
     async componentDidMount() {
         const { data } = await axios.get("/user");
         this.setState(data);
-        console.log("state", this.state);
     }
 
-    toggleModal() {
+    showUploader() {
         this.setState({ uploaderIsVisible: !this.state.uploaderIsVisible });
     }
 
-    methodInApp(newUrl) {
+    setImage(newUrl) {
         this.setState({ image: newUrl });
     }
 
-    setImage() {}
-
-    setBio() {}
+    setBio(newBio) {
+        this.setState({ bio: newBio });
+    }
 
     render() {
         return (
             <React.Fragment>
-                <div className="navbar">
-                    <ProfilePic
-                        toggleModal={() => this.toggleModal()}
-                        firstName={this.state.first}
-                        lastName={this.state.last}
-                        image={this.state.image}
-                    />
-                    <h1 className="">Disconnect</h1>
+                <div className="nav">
+                    <img src="assets/disconnect.jpg" />
+                    <a href="/logout">Logout</a>
                 </div>
+                <Profile
+                    id={this.state.id}
+                    first={this.state.first}
+                    last={this.state.last}
+                    image={this.state.image}
+                    showUploader={this.showUploader}
+                    bio={this.state.bio}
+                    setBio={this.setBio}
+                />
                 {this.state.uploaderIsVisible && (
-                    <Uploader methodInApp={this.methodInApp} />
+                    <Uploader setImage={this.setImage} />
                 )}
             </React.Fragment>
         );
