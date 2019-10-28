@@ -154,6 +154,28 @@ app.post("/editbio", (req, res) => {
         });
 });
 
+app.get("/api/user/:id", async (req, res) => {
+    console.log("session", req.session.userId);
+    console.log("params", req.params.id);
+    if(req.session.userId == req.params.id){   
+        console.log("same");
+        res.json({data:true});
+    }else {
+        console.log("notsame");  
+    try {
+        const { rows } = await getUser(req.params.id);
+        res.json(rows[0]);
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+}
+}
+);
+
+
+
+
 //* is a fallthrough route
 app.get("*", function(req, res) {
     if (!req.session.userId) {

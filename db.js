@@ -19,11 +19,13 @@ function addUser(first, last, email, password) {
 function getUser(id) {
     return db.query(
         `
-         SELECT * FROM users
+         SELECT * FROM public.users
          WHERE id= $1`,
         [id]
     );
 }
+
+
 function getHashPassword(email) {
     return db.query("SELECT password As hash FROM users WHERE email = $1", [
         email
