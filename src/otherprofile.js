@@ -21,11 +21,6 @@ export class OtherProfile extends React.Component {
         const { data } = await axios.get(
             "/api/user/" + this.props.match.params.id
         );
-
-       
-       
-        console.log("otherprofile data: ", data);
-        console.log("equal?",data.data);
      
         this.setState({
             image: data.image,
@@ -39,28 +34,18 @@ export class OtherProfile extends React.Component {
         {
             this.props.history.push("/");   
         }
-
-       
-     
-        //make an axios req to server asking for info about this.props.match.params.id
-        // if there's no user with that id, redirect back to /
-        // if the user is trying to visit their own page redirect them back to /
-        //if (this.props.match.params.id == 1) {
-            // imagine i'm logged in as user 6
-         //   this.props.history.push("/");
-       // }
     }
     render() {  
       
-            return (               
-                <React.Fragment>
-                    <h1>Other Profile</h1>
-                  <img src={this.state.image}/>
-                  <p>Name: {this.state.first} {this.state.last}</p>
-                  <p>{this.state.bio}</p>            
+        return (               
+            <React.Fragment>
+                <h1>Other Profile</h1>
+                <img src={this.state.image} title={this.state.first+ " " +this.state.last}/>
+                <p>Name: {this.state.first} {this.state.last}</p>
+                <p>{this.state.bio}</p>            
             </React.Fragment> 
                
-            );
+        );
         
        
          

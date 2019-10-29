@@ -6,7 +6,6 @@ import Profile from "./profile";
 import {OtherProfile} from "./otherprofile";
 import Header from "./header";
 
-
 export default class App extends React.Component {
     constructor() {
         super();
@@ -44,39 +43,39 @@ export default class App extends React.Component {
      
         return (   
             <BrowserRouter>
-            <div>
-                <Header
-                image={this.state.image}/>        
-            <Route exact path="/" render={
-                props=>
                 <div>
-                <Profile
-                id={this.state.id}
-                first={this.state.first}
-                last={this.state.last}
-                image={this.state.image}
-                showUploader={this.showUploader}
-                bio={this.state.bio}
-                setBio={this.setBio}
-            />
-            </div>
-            } 
-            />
-            <Route 
-            exact path="/user/:id"
-             render={props => (
-         <OtherProfile
-             key={props.match.url}
-             match={props.match}
-             history={props.history}
-         />
-     )}
-  />                             
-                {this.state.uploaderIsVisible && 
+                    <Header
+                        image={this.state.image}/>        
+                    <Route exact path="/" render={
+                         props=>(  <div>
+                            <Profile
+                                id={this.state.id}
+                                first={this.state.first}
+                                last={this.state.last}
+                                image={this.state.image}
+                                showUploader={this.showUploader}
+                                bio={this.state.bio}
+                                setBio={this.setBio}
+                            />
+                        </div>)
+                      
+                    } 
+                    />
+                    <Route 
+                        exact path="/user/:id"
+                        render={props => (
+                            <OtherProfile
+                                key={props.match.url}
+                                match={props.match}
+                                history={props.history}
+                            />
+                        )}
+                    />                             
+                    {this.state.uploaderIsVisible && 
                     <Uploader setImage={this.setImage} />
-                }
-          </div>
-          </BrowserRouter>
+                    }
+                </div>
+            </BrowserRouter>
         );
     }
 }

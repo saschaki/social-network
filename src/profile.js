@@ -1,6 +1,7 @@
 import React from "react";
 import ProfilePic from "./profile-pic";
 import BioEditor from "./bio-editor";
+import FindPeople from "./find-people";
 
 export default class Profile extends React.Component {
     constructor() {
@@ -19,6 +20,7 @@ export default class Profile extends React.Component {
                     image={this.props.image}
                 />
                 <BioEditor bio={this.props.bio} setBio={this.props.setBio} />
+                <FindPeople/>
             </React.Fragment>
         );
     }

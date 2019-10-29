@@ -3,7 +3,7 @@ const app = express();
 const compression = require("compression"); //compress responses (make them as small as possible)
 const port = 8080;
 const cookieSession = require("cookie-session");
-const { addUser, getUser, addImage, editBio } = require("./db");
+const { addUser, getUser, addImage, editBio, getRecentUsers, getAllUsers, findPeople } = require("./db");
 const { hash, auth } = require("./bcrypt");
 const csurf = require("csurf");
 const multer = require("multer");
@@ -173,8 +173,35 @@ app.get("/api/user/:id", async (req, res) => {
 }
 );
 
+app.get("/users/recent", async (req, res) => {
+    try {
+        const { rows } = await getRecentUsers(req.session.userId);
+        console.log(rows);
+        res.json(rows);
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+}
+);
 
+app.get("/users/all", async (req, res) => {
+    try {
+        const { rows } = await getAllUsers();
+        res.json(rows);
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+}
+);
 
+app.get("/api/users/:input", (req, res) => {
+    findPeople(req.params.input).then(({ rows }) => {
+        console.log(rows);
+        res.json(rows);
+    });
+});
 
 //* is a fallthrough route
 app.get("*", function(req, res) {

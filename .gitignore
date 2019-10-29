@@ -3,3 +3,4 @@ node_modules
 secrets.json
 encounter.txt
 config.json
+encounter

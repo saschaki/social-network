@@ -72,6 +72,37 @@ function editBio(id, bio) {
         });
 }
 
+function getRecentUsers(id) {
+        return db.query(
+            `
+            SELECT first, last, image, id FROM users
+            WHERE id != $1
+            ORDER BY id DESC
+            LIMIT 3
+        `,[id]
+        ).catch(err => {
+            console.log("addImage-error : ", err);
+            return Promise.reject(new Error("Can't get recent users"));
+        });
+   
+}
+
+function getAllUsers() {
+    return db.query("SELECT id,first,last,image FROM users");
+}
+
+function findPeople(input){
+    return db.query(
+        `
+        SELECT first, last, image, id FROM users
+        WHERE first ILIKE $1`,
+        [input + "%"]
+    ).catch(err => {
+        console.log("addImage-error : ", err);
+        return Promise.reject(new Error("Can't find people"));
+    });
+}
+
 module.exports = {
     addUser,
     getUser,
@@ -79,5 +110,8 @@ module.exports = {
     getImage,
     addImage,
     getLoginId,
-    editBio
+    editBio,
+    getRecentUsers,
+    getAllUsers,
+    findPeople
 };

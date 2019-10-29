@@ -5,18 +5,18 @@ export default class Header extends React.Component {
         super();
         this.state = {
         };        
-        }
-
-        componentDidMount(){
-            console.log("Header mounted")
-        }
-
-        render(){
-            return(
-                <div className="header">                  
-                    <img src="/assets/disconnect.jpg"/>
-                    <img src={this.props.image}/>       
-                </div>
-            )
-        }
     }
+
+    componentDidMount(){
+        console.log("Header mounted")
+    }
+
+    render(){
+        return(
+            <div className="header">                  
+                <img src="/assets/disconnect.jpg"/>
+                <img src={this.props.image}/>       
+            </div>
+        );
+    }
+}
