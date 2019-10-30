@@ -11,16 +11,32 @@ html {
 }
 
 .header{
-    width:100vw;        
-    justify-content: space-between;
+    position: relative;
+    padding: 10px;
+    border: 1px gray dashed;
+    height: 70px;
 }
 
-header {
-    background-color:red;
-    display:block;
-    top:0;
+.header #logo{
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    height: 50px;
+    width: 50px;
+}
+
+.header #self{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    height: 50px;
+    width: 50px;
+}
+
+.header a {
     position:absolute;
-    height:50px;
+    top: 10px;
+    right: 80px;
 }
 
 main {
@@ -58,7 +74,7 @@ img:hover {
  img {
     -webkit-filter: brightness(80%);
     width: 50px;
-    height: 50px;
+    height:     50px;
     object-fit: cover;
 }
 

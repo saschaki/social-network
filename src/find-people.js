@@ -20,6 +20,7 @@ export default function FindPeople() {
                 data.image="/img/default.png";
                 console.log(error);
             });
+        
             setRecentUsers(data);  
             } else {  const { data } = await axios.get(`/api/users/${userInput}`);
                 !ignore ? setUsers(data) : console.log("ignored");   

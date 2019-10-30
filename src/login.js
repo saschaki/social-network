@@ -29,13 +29,15 @@ export default class Login extends React.Component {
                 password: this.state.password
             })
             .then(({ data }) => {
+                data.success ? location.replace("/") :  this.setState({error: true});
+                /*
                 if (data.success) {
                     location.replace("/"); //worked
                 } else {
                     this.setState({
                         error: true
                     });
-                }
+                } */
             });
     }
 

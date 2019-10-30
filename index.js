@@ -3,7 +3,7 @@ const app = express();
 const compression = require("compression"); //compress responses (make them as small as possible)
 const port = 8080;
 const cookieSession = require("cookie-session");
-const { addUser, getUser, addImage, editBio, getRecentUsers, getAllUsers, findPeople } = require("./db");
+const { addUser, getUser, addImage, editBio, getRecentUsers, getAllUsers, findPeople, getFriendshipStatus, makeFriendship, cancelFriendship, acceptFriendship} = require("./db");
 const { hash, auth } = require("./bcrypt");
 const csurf = require("csurf");
 const multer = require("multer");
@@ -162,14 +162,14 @@ app.get("/api/user/:id", async (req, res) => {
         res.json({data:true});
     }else {
         console.log("notsame");  
-    try {
-        const { rows } = await getUser(req.params.id);
-        res.json(rows[0]);
-    } catch (err) {
-        console.log(err);
-        res.sendStatus(500);
+        try {
+            const { rows } = await getUser(req.params.id);
+            res.json(rows[0]);
+        } catch (err) {
+            console.log(err);
+            res.sendStatus(500);
+        }
     }
-}
 }
 );
 
@@ -200,8 +200,66 @@ app.get("/api/users/:input", (req, res) => {
     findPeople(req.params.input).then(({ rows }) => {
         console.log(rows);
         res.json(rows);
+    }).catch(err => {
+        console.log("users:input", err);
+        res.sendStatus(500);
     });
 });
+
+app.get("/user/:id/status", (req, res) => {
+    console.log("session", req.session.userId);
+    console.log("params", req.params.id);
+    getFriendshipStatus(req.session.userId,Number(req.params.id)).then(({ rows }) => {
+        console.log("status rows", rows);
+        console.log(">>", rows[0]);
+        if (!rows[0]) {
+            res.json({ relation: false });
+        } else {
+            if (rows[0].accepted) {
+                res.json({ relation: true, friends: true });
+            } else {
+                res.json({ rows, relation: true, friends: false });
+            }
+        }
+    });
+});
+
+app.post("/send-fr/:id", (req, res) => {
+    makeFriendship(req.session.userId, Number(req.params.id))
+        .then(({ rows }) => {
+            console.log("makefriendship:", rows);
+            res.json({ relation: true })
+        })
+        .catch(err => {
+            console.log("makefriend", err);
+            res.sendStatus(500);
+        });
+});
+
+app.post("/cancel-fr/:id", (req, res) => {
+    cancelFriendship(req.session.userId, Number(req.params.id))
+        .then(({ rows }) => {
+            console.log("cancelfriendship:", rows);
+            res.json({ relation: false })
+        })
+        .catch(err => {
+            console.log("cancelfriend", err);
+            res.sendStatus(500);
+        });
+});
+
+app.post("/accept-fr/:id", (req, res) => {
+    acceptFriendship(req.session.userId, Number(req.params.id))
+        .then(({ rows }) => {
+            console.log("acceptfriendship:", rows);
+            res.json({ friend: true })
+        })
+        .catch(err => {
+            console.log("acceptfriend", err);
+            res.sendStatus(500);
+        });
+});
+
 
 //* is a fallthrough route
 app.get("*", function(req, res) {

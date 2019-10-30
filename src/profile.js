@@ -15,12 +15,14 @@ export default class Profile extends React.Component {
     render() {
         return (
             <React.Fragment>
-                <ProfilePic
-                    showUploader={this.props.showUploader}
-                    image={this.props.image}
-                />
-                <BioEditor bio={this.props.bio} setBio={this.props.setBio} />
-                <FindPeople/>
+                <div className="profile">
+                    <ProfilePic
+                        showUploader={this.props.showUploader}
+                        image={this.props.image}
+                    />
+                    <BioEditor bio={this.props.bio} setBio={this.props.setBio} />
+                    <FindPeople/> 
+                </div>  
             </React.Fragment>
         );
     }

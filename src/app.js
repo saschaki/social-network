@@ -47,7 +47,7 @@ export default class App extends React.Component {
                     <Header
                         image={this.state.image}/>        
                     <Route exact path="/" render={
-                         props=>(  <div>
+                        props=>(  <div>
                             <Profile
                                 id={this.state.id}
                                 first={this.state.first}
@@ -57,8 +57,7 @@ export default class App extends React.Component {
                                 bio={this.state.bio}
                                 setBio={this.setBio}
                             />
-                        </div>)
-                      
+                        </div>)                      
                     } 
                     />
                     <Route 

@@ -73,17 +73,17 @@ function editBio(id, bio) {
 }
 
 function getRecentUsers(id) {
-        return db.query(
-            `
+    return db.query(
+        `
             SELECT first, last, image, id FROM users
             WHERE id != $1
             ORDER BY id DESC
             LIMIT 3
         `,[id]
-        ).catch(err => {
-            console.log("addImage-error : ", err);
-            return Promise.reject(new Error("Can't get recent users"));
-        });
+    ).catch(err => {
+        console.log("addImage-error : ", err);
+        return Promise.reject(new Error("Can't get recent users"));
+    });
    
 }
 
@@ -98,9 +98,36 @@ function findPeople(input){
         WHERE first ILIKE $1`,
         [input + "%"]
     ).catch(err => {
-        console.log("addImage-error : ", err);
+        console.log("findPeople-error : ", err);
         return Promise.reject(new Error("Can't find people"));
     });
+}
+
+function getFriendshipStatus(myId, otherId){
+    return db.query(
+        `SELECT * FROM friendships 
+    WHERE (receiver_id = $1 AND sender_id = $2)
+    OR (receiver_id = $2 AND sender_id = $1)`,
+        [myId, otherId]);
+}
+
+function makeFriendship(myId, otherId){
+    return db.query(
+        `INSERT INTO friendships (sender_id, receiver_id)
+        VALUES ($1, $2) ON CONFLICT DO NOTHING`, [myId, otherId]); 
+}
+
+function cancelFriendship(myId, otherId){
+    return db.query(
+        `DELETE FROM friendships
+        WHERE sender_id = $1 AND receiver_id= $2
+        OR (receiver_id = $2 AND sender_id = $1)`, [myId, otherId]);
+}
+
+function acceptFriendship(myId, otherId){
+    return db.query(
+        `UPDATE friendships SET ACCEPTED = true
+        WHERE receiver_id = $1 AND sender_id = $2`, [myId, otherId]); 
 }
 
 module.exports = {
@@ -113,5 +140,9 @@ module.exports = {
     editBio,
     getRecentUsers,
     getAllUsers,
-    findPeople
+    findPeople,
+    getFriendshipStatus,
+    makeFriendship,
+    cancelFriendship,
+    acceptFriendship
 };
