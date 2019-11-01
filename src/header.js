@@ -15,8 +15,9 @@ export default class Header extends React.Component {
         return(
             <div className="header">                  
                 <img id="logo" src="/assets/disconnect.jpg"/>
-                <a href="">find People</a>
-                <img id="self" src={this.props.image}/>       
+                <a href="/">
+                <img id="self" src={this.props.image}/> 
+                </a>      
             </div>
         );
     }

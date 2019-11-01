@@ -81,7 +81,7 @@ function getRecentUsers(id) {
             LIMIT 3
         `,[id]
     ).catch(err => {
-        console.log("addImage-error : ", err);
+        console.log("getRecent-error : ", err);
         return Promise.reject(new Error("Can't get recent users"));
     });
    
@@ -91,12 +91,14 @@ function getAllUsers() {
     return db.query("SELECT id,first,last,image FROM users");
 }
 
-function findPeople(input){
+function findPeople(id,input){
     return db.query(
         `
         SELECT first, last, image, id FROM users
-        WHERE first ILIKE $1`,
-        [input + "%"]
+        WHERE (first ILIKE $2
+        OR last ILIKE $2)
+        AND id != $1`,
+        [id,input + "%"]
     ).catch(err => {
         console.log("findPeople-error : ", err);
         return Promise.reject(new Error("Can't find people"));

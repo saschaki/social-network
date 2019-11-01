@@ -11,10 +11,42 @@ html {
 }
 
 .header{
+    display:block;
+    min-width: 100% !important;
     position: relative;
     padding: 10px;
-    border: 1px gray dashed;
+    border-bottom: 2px orange;
     height: 70px;
+}
+
+.app {
+    display:grid;
+    width:100vw;
+    height: 90vh;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+img.profile-pic-container{
+  
+  
+}
+
+img.otherprofile {
+    text-align:center;
+}
+
+.otherprofileimg{
+    height: 250px;
+    width: auto; 
+    border: 5px solid black;
+}
+
+img.profile-pic{
+    border: 5px solid black;
+    vertical-align: middle;
 }
 
 .header #logo{
@@ -33,10 +65,32 @@ html {
     width: 50px;
 }
 
-.header a {
-    position:absolute;
-    top: 10px;
-    right: 80px;
+
+.profile {
+    position: relative;
+    padding: 10px;
+}
+
+.recentUsers{
+    display: flex;
+    flex-direction:column;
+}
+.recentUsers img{
+    vertical-align: middle;
+    }
+
+.recentUsers a{
+    text-decoration: none;
+    color:black;
+}
+
+.finderInput{display: block;
+width: 100%;
+min-width: 100%;}
+   
+
+img {
+border-radius:50%;
 }
 
 main {
@@ -68,6 +122,7 @@ img:hover {
     -moz-transition: all 1s ease;
     -o-transition: all 1s ease;
     -ms-transition: all 1s ease;
+    transform: scale(1.05);
     transition: all 1s ease;
 }
 
@@ -76,6 +131,7 @@ img:hover {
     width: 50px;
     height:     50px;
     object-fit: cover;
+    margin-top: 10px;
 }
 
 .outer-container {
@@ -106,9 +162,6 @@ img:hover {
     opacity: 1; /* Firefox */
     color: white;
     background: black;
-}
-
-#welcome h1 {
 }
 
 input {

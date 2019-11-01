@@ -14,8 +14,8 @@ const conf = {
     optimization:
         require.main == module
             ? {
-                  minimizer: [new UglifyJsPlugin({})]
-              }
+                minimizer: [new UglifyJsPlugin({})]
+            }
             : {},
     module: {
         rules: [

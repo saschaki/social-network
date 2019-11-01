@@ -10,7 +10,9 @@ export default class BioEditor extends React.Component {
         };
     }
 
-    componentDidMount() {}
+    componentDidMount() {
+        this.setState({bio:this.props.bio}); //otherwise edit bio, do nothing, save will delete bio 
+    }
 
     editBio() {
         axios

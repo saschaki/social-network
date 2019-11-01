@@ -5,10 +5,9 @@ export default function FindPeople() {
     //image = image || "/img/default.png";
     const [userInput, setUserInput] = useState();
     const [users, setUsers] = useState([]);
-    const [recentUsers, setRecentUsers] = useState([]);
+    // const [recentUsers, setRecentUsers] = useState([]);
     const handleError = e => {
         e.target.setAttribute("src","/img/default.png");
-        console.log("handle fired");
     };
     useEffect(()=>{
         // (1) useEffect will run when the component mounts and whenever we change state ( so whenever we change userInput or countries)
@@ -21,7 +20,8 @@ export default function FindPeople() {
                 console.log(error);
             });
         
-            setRecentUsers(data);  
+            //setRecentUsers(data);  
+            setUsers(data);
             } else {  const { data } = await axios.get(`/api/users/${userInput}`);
                 !ignore ? setUsers(data) : console.log("ignored");   
             }
@@ -34,19 +34,22 @@ export default function FindPeople() {
     }, [userInput]);
 
     return(
-        <div>
-            <h1>Find People</h1>
-            <p>Checkout who just joined!</p>      
-            {recentUsers.map(user=> (<a key={user.id} href={`/user/${user.id}`}> <img key={user.id} src={user.image} title={user.first+ " " + user.last} onError={e=>handleError(e)}/></a>) )}   
-            <p>Are you looking for someone in particular ?</p>  
-            <input
-                name="user-input"
-                type="text"
-                onChange={e => setUserInput(e.target.value)}
-            />
-            {users.map(user => (                 
-                (<a key={user.id} href={`/user/${user.id}`}> <img key={user.id} src={user.image} title={user.first+user.last} onError={e=>handleError(e)}/></a>  )                                    
-            ))}
+        <div>       
+            <p>Are you looking for someone in particular ?</p>   
+            <div className="finderInput">
+                <input
+                    name="user-input"
+                    type="text"
+                    onChange={e => setUserInput(e.target.value)}
+                />
+                {!users[0] && <p>No user found</p>}   
+            </div>
+            {!userInput && <p>Checkout who just joined!</p>}
+            <div className="recentUsers">  
+                {users.map(user => (                 
+                    (<a key={user.id} href={`/user/${user.id}`}> <img key={user.id} src={user.image} title={user.first+ " " + user.last} onError={e=>handleError(e)}/><span>{user.first + " " + user.last}</span></a>  )                                    
+                ))}
+            </div> 
         </div>
     );
 }

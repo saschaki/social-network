@@ -1,74 +1,60 @@
 import React, {useState, useEffect} from "react";
 import axios from "./axios";
 
-const FriendButton = props => {
-    const [friendButton, setFriendButton] = useState("Make Friend Request");
-    const [profileState, setProfileState] = useState(props);
-  
-    useEffect(()=>{
-        (async ()=> {     
-            {   const {data} = await axios.get("/user/" + profileState.id + "/status").catch(error => {
-                console.log(error);
-            });
-            console.log("useeffect.data",data.rows[0]);
-            console.log("useeffect.data>>",data.relation);
-            if(!data.relation){
-                setFriendButton("Make Friend Request");
-            } else if(data.friends) {
-                console.log("friends!!")
-                setFriendButton("End Friendship");
-            } else if(data.relation){
-              
-                setFriendButton("Cancel");
+const FriendButton = props =>{
+    const [button, setButton] = useState("");
+    useEffect(() => {
+        (async () => {
+            const { data } = await axios.get(
+                "/user/" + props.id + "/status"
+            );
+            if (!data.relation) {
+                setButton("Send Friend Request");
+            } else {
+                if (data.friends) {
+                    setButton("End Friendship");
+                } else { //related
+                    if (props.id == data.rows[0].receiver_id) {
+                        setButton("Cancel Friendship Request");
+                    } else {
+                        setButton("Accept Friendship");
+                    }
+                }
             }
-            }
-                                    
-        }          
-                                      
-        )();
-        return ()=> {
-            //clean-up function
-        };
-    }, [props, friendButton]);
+        })();
+    }, [props, button]);
 
-    const handleButton = e => {
-        console.log(e);
-        if(friendButton =="Make Friend Request"){
-            console.log("make");
+    function handleFriendBtnClick() {
+        if (button == "Send Friend Request") {
             (async () => {
-                const { data } = await axios.post("/send-fr/"+ profileState.id);
-                setFriendButton("Cancel");
+                const { data } = await axios.post("/send-fr/"+ props.id);
+                setButton("Cancel Friendship Request");
             })();
-         
-        }else if(friendButton == "Accept Friendship"){
+        } else if (button == "Accept Friendship") {
+            console.log("accept");
             (async () => {
                 const { data } = await axios.post(
-                    `/accept-fr/${profileState.id}`
+                    `/accept-fr/${props.id}`
                 );
-                setFriendButton("End Friendship");
+                setButton("End Friendship");
             })();
-        }else if (
-            friendButton == "End Friendship" ||
-            friendButton == "Cancel"
-        ){
+        } else if (
+            button == "End Friendship" ||
+        button == "Cancel Friendship Request"
+        ) {
             (async () => {
-                const { data } = await axios.post(`/cancel-fr/${profileState.id}`);
-                setFriendButton("Make Friend Request");
+                const { data } = await axios.post(`/cancel-fr/${props.id}`);
+                setButton("Send Friend Request");
             })();
         }
-    };
+    }
 
-    return(
-        <div>
-            <h1>Friend-Button #{profileState.id}</h1>
-            <button
-                onClick={() => handleButton()
-                }
-            >
-                {friendButton}    {profileState.id}              
-            </button>     
+    return (
+        <div className="">
+            <button onClick={handleFriendBtnClick}>{button}</button>
         </div>
     );
+
 };
 
 export default FriendButton;

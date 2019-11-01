@@ -22,7 +22,6 @@ export default class Login extends React.Component {
     }
 
     submit() {
-        console.log("login submitted");
         axios
             .post("/login", {
                 email: this.state.email,
@@ -30,14 +29,6 @@ export default class Login extends React.Component {
             })
             .then(({ data }) => {
                 data.success ? location.replace("/") :  this.setState({error: true});
-                /*
-                if (data.success) {
-                    location.replace("/"); //worked
-                } else {
-                    this.setState({
-                        error: true
-                    });
-                } */
             });
     }
 

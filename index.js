@@ -145,7 +145,7 @@ app.get("logout", function(req, res) {
 app.post("/editbio", (req, res) => {
     editBio(req.session.userId, req.body.bio)
         .then(({ rows }) => {
-            console.log("editbio:", rows);
+            // console.log("editbio:", rows);
             res.json(rows[0]);
         })
         .catch(err => {
@@ -155,8 +155,8 @@ app.post("/editbio", (req, res) => {
 });
 
 app.get("/api/user/:id", async (req, res) => {
-    console.log("session", req.session.userId);
-    console.log("params", req.params.id);
+    //console.log("session", req.session.userId);
+    //console.log("params", req.params.id);
     if(req.session.userId == req.params.id){   
         console.log("same");
         res.json({data:true});
@@ -176,7 +176,7 @@ app.get("/api/user/:id", async (req, res) => {
 app.get("/users/recent", async (req, res) => {
     try {
         const { rows } = await getRecentUsers(req.session.userId);
-        console.log(rows);
+        // console.log(rows);
         res.json(rows);
     } catch (err) {
         console.log(err);
@@ -197,8 +197,8 @@ app.get("/users/all", async (req, res) => {
 );
 
 app.get("/api/users/:input", (req, res) => {
-    findPeople(req.params.input).then(({ rows }) => {
-        console.log(rows);
+    findPeople(req.session.userId,req.params.input).then(({ rows }) => {
+        //  console.log(rows);
         res.json(rows);
     }).catch(err => {
         console.log("users:input", err);
@@ -207,11 +207,11 @@ app.get("/api/users/:input", (req, res) => {
 });
 
 app.get("/user/:id/status", (req, res) => {
-    console.log("session", req.session.userId);
-    console.log("params", req.params.id);
+    //  console.log("session", req.session.userId);
+    //  console.log("params", req.params.id);
     getFriendshipStatus(req.session.userId,Number(req.params.id)).then(({ rows }) => {
-        console.log("status rows", rows);
-        console.log(">>", rows[0]);
+        // console.log("status rows", rows);
+        // console.log(">>", rows[0]);
         if (!rows[0]) {
             res.json({ relation: false });
         } else {
@@ -226,8 +226,8 @@ app.get("/user/:id/status", (req, res) => {
 
 app.post("/send-fr/:id", (req, res) => {
     makeFriendship(req.session.userId, Number(req.params.id))
-        .then(({ rows }) => {
-            console.log("makefriendship:", rows);
+        .then(({ data }) => {
+            // console.log("makefriendship:", rows);
             res.json({ relation: true })
         })
         .catch(err => {
@@ -238,9 +238,9 @@ app.post("/send-fr/:id", (req, res) => {
 
 app.post("/cancel-fr/:id", (req, res) => {
     cancelFriendship(req.session.userId, Number(req.params.id))
-        .then(({ rows }) => {
-            console.log("cancelfriendship:", rows);
-            res.json({ relation: false })
+        .then(({ data }) => {
+            // console.log("cancelfriendship:", data);
+            res.json({ relation: false });
         })
         .catch(err => {
             console.log("cancelfriend", err);
@@ -250,9 +250,9 @@ app.post("/cancel-fr/:id", (req, res) => {
 
 app.post("/accept-fr/:id", (req, res) => {
     acceptFriendship(req.session.userId, Number(req.params.id))
-        .then(({ rows }) => {
-            console.log("acceptfriendship:", rows);
-            res.json({ friend: true })
+        .then(({ data }) => {
+            // console.log("acceptfriendship:", data);
+            res.json({ friend: true });
         })
         .catch(err => {
             console.log("acceptfriend", err);

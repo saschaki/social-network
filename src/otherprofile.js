@@ -16,9 +16,8 @@ export class OtherProfile extends React.Component {
 
     async componentDidMount() {
         console.log("OtherProfile mounted");
-        console.log("id", this.props.match.params.id);
-        console.log("history",this.props.history);
-      
+        //console.log("id", this.props.match.params.id);
+        //console.log("history",this.props.history); 
         const { data } = await axios.get(
             "/api/user/" + this.props.match.params.id
         );
@@ -36,12 +35,14 @@ export class OtherProfile extends React.Component {
             this.props.history.push("/");   
         }
     }
-    render() {  
-      
+    
+    render() {    
         return (               
             <React.Fragment>
                 <h1>Other Profile</h1>
-                <img src={this.state.image} title={this.state.first+ " " +this.state.last}/>
+                <div className="otherprofile">
+                    <img className="otherprofileimg" src={this.state.image} title={this.state.first+ " " +this.state.last}/>
+                </div>
                 <p>Name: {this.state.first} {this.state.last}</p>
                 <p>{this.state.bio}</p> 
                 <FriendButton id={this.props.match.params.id}/>           
