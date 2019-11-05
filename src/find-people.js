@@ -47,7 +47,7 @@ export default function FindPeople() {
             {!userInput && <p>Checkout who just joined!</p>}
             <div className="recentUsers">  
                 {users.map(user => (                 
-                    (<a key={user.id} href={`/user/${user.id}`}> <img key={user.id} src={user.image} title={user.first+ " " + user.last} onError={e=>handleError(e)}/><span>{user.first + " " + user.last}</span></a>  )                                    
+                    (<a key={user.id} href={`/user/${user.id}`}> <img key={user.id} src={user.image || "/img/default.png"} title={user.first+ " " + user.last} onError={e=>handleError(e)}/><span>{user.first + " " + user.last}</span></a>  )                                    
                 ))}
             </div> 
         </div>

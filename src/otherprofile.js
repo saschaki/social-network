@@ -41,7 +41,7 @@ export class OtherProfile extends React.Component {
             <React.Fragment>
                 <h1>Other Profile</h1>
                 <div className="otherprofile">
-                    <img className="otherprofileimg" src={this.state.image} title={this.state.first+ " " +this.state.last}/>
+                    <img className="otherprofileimg" src={this.state.image || "/img/default.png"} title={this.state.first+ " " +this.state.last}/>
                 </div>
                 <p>Name: {this.state.first} {this.state.last}</p>
                 <p>{this.state.bio}</p> 

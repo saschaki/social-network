@@ -15,7 +15,7 @@ export default function ProfilePic({ image, showUploader, first, last }) {
                     onClick={showUploader}
                     onError={e=>handleError(e)}
                 />
-                 <span>{first} {last}</span>               
+                <span>{first} {last}</span>               
             </div>
         </React.Fragment>
     );

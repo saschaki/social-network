@@ -6,18 +6,36 @@
 
 body,
 html {
-    height: 100%;
-    display: grid;
+    height: vh;
 }
 
 .header{
-    display:block;
+    display:flex;
     min-width: 100% !important;
     position: relative;
     padding: 10px;
-    border-bottom: 2px orange;
-    height: 70px;
+    height: 100px;
+    border-bottom: 2px solid orange;
+    margin-bottom: 20px;
 }
+
+.header #logo{
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    height: 50px;
+    width: 50px;
+}
+
+.header #self{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    height: 50px;
+    width: 50px;
+}
+
+
 
 .app {
     display:grid;
@@ -29,6 +47,12 @@ html {
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
+.chat-container {
+    height: 300px;
+    overflow-y : scroll;
+}
+
 img.profile-pic-container{
   
   
@@ -47,22 +71,6 @@ img.otherprofile {
 img.profile-pic{
     border: 5px solid black;
     vertical-align: middle;
-}
-
-.header #logo{
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    height: 50px;
-    width: 50px;
-}
-
-.header #self{
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    height: 50px;
-    width: 50px;
 }
 
 
@@ -254,4 +262,9 @@ textarea:focus {
     height: 100px;
     background: grey;
     display: flex;
+}
+
+a {
+    text-decoration: none;
+    color:black;
 }

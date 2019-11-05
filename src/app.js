@@ -5,6 +5,11 @@ import axios from "./axios";
 import Profile from "./profile";
 import {OtherProfile} from "./otherprofile";
 import Header from "./header";
+import Friends from "./friends";
+import FindPeople from "./find-people";
+import { Link } from "react-router-dom";
+import  Chat  from "./chat";
+//import Friends from "./friends";
 
 export default class App extends React.Component {
     constructor() {
@@ -51,9 +56,10 @@ export default class App extends React.Component {
                     <Header
                         image={this.state.image}/>  
                     <div className="app">     
-                        <Route exact path="/" render={
-                            props=>(  <div>
+                        <Route exact path="/" 
+                            render={ props=>(  <div>
                                 <Profile
+                                    key={props.match.url}
                                     id={this.state.id}
                                     first={this.state.first}
                                     last={this.state.last}
@@ -63,7 +69,7 @@ export default class App extends React.Component {
                                     setBio={this.setBio}
                                 />
                             </div>)                      
-                        } 
+                            } 
                         />
                         <Route 
                             exact path="/user/:id"
@@ -74,7 +80,29 @@ export default class App extends React.Component {
                                     history={props.history}
                                 />
                             )}
-                        />                             
+                        /> 
+                        <Route
+                            path="/friends"
+                            render={props => (
+                                <Friends
+                                    key={props.match.url}
+                                    match={props.match}
+                                    history={props.history}
+                                />
+                            )}
+                        /> 
+                        <Route
+                            path="/discover"
+                            render={props => (
+                                <FindPeople 
+                                    image={this.state.image}
+                                    key={props.match.url}
+                                    match={props.match}
+                                    history={props.history}
+                                />
+                            )}
+                        />  
+                        <Route exact path="/chat" component = { Chat } />                                                               
                         {this.state.uploaderIsVisible && 
                     <Uploader setImage={this.setImage} />
                         }

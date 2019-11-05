@@ -2,15 +2,19 @@ const express = require("express");
 const app = express();
 const compression = require("compression"); //compress responses (make them as small as possible)
 const port = 8080;
-const cookieSession = require("cookie-session");
-const { addUser, getUser, addImage, editBio, getRecentUsers, getAllUsers, findPeople, getFriendshipStatus, makeFriendship, cancelFriendship, acceptFriendship} = require("./db");
-const { hash, auth } = require("./bcrypt");
+//const cookieSession = require("cookie-session");
+const { getHashPassword,addUser, getUser, addImage, editBio, getRecentUsers, getAllUsers, findPeople, getFriendshipStatus, makeFriendship, cancelFriendship, acceptFriendship, findFriendsAndWannabes, getLastTenChatMessages} = require("./db");
+const { hash, auth, compare } = require("./bcrypt");
 const csurf = require("csurf");
 const multer = require("multer");
 const uidSafe = require("uid-safe");
 const path = require("path");
 const s3 = require("./s3");
 const { s3Url } = require("./config");
+//
+const server = require('http').Server(app);
+const io = require('socket.io')(server, { origins: 'localhost:8080' });//and domainname, ip...
+//
 
 const diskStorage = multer.diskStorage({
     destination: function(req, file, callback) {
@@ -43,13 +47,27 @@ let secrets;
 process.env.NODE_ENV === "production"
     ? (secrets = process.env)
     : (secrets = require("./secrets"));
-
+/*
 app.use(
     cookieSession({
         secret: `${secrets.secret}`,
         maxAge: 1000 * 60 * 60 * 24 * 14
     })
 );
+*/
+//
+const cookieSession = require('cookie-session');
+const cookieSessionMiddleware = cookieSession({
+    secret: `I'm always angry.`,
+    maxAge: 1000 * 60 * 60 * 24 * 90
+});
+
+app.use(cookieSessionMiddleware);
+io.use(function(socket, next) {
+    cookieSessionMiddleware(socket.request, socket.request.res, next);
+});
+
+//
 app.use(csurf());
 app.use(function(req, res, next) {
     res.cookie("mytoken", req.csrfToken());
@@ -98,27 +116,28 @@ app.post("/register", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-    const { email, password } = req.body;
-    auth(email, password)
-        .then(auth => {
-            return !auth
-                ? Promise.reject(new Error("Incorrect password"))
-                : getUser(email);
-        })
+    let { email, password } = req.body;
+    let savedPswd, userId;
+
+    getHashPassword(email)
         .then(result => {
-            const { user_id: userId } = result.rows[0];
-            req.session.userId = userId;
-            //const { user } = req.session;
-            res.json({
-                success: true
-            });
+            savedPswd = result.rows[0].password;
+            userId = result.rows[0].id;
+            return compare(password, savedPswd);
         })
-        .catch(err => {
-            console.log(err);
-            res.render("login", { error: true, err });
+        .then(isMatch => {
+            if (isMatch) {
+                req.session.userId = userId;
+                res.json({ success: true });
+            } else {
+                res.json({ success: false });
+            }
+        })
+        .catch(error => {
+            console.log(error);
+            res.sendStatus(500);
         });
 });
-
 app.post("/upload", uploader.single("image"), s3.upload, (req, res) => {
     const url = `${s3Url}${req.file.filename}`;
     addImage(req.session.userId, url)
@@ -260,6 +279,28 @@ app.post("/accept-fr/:id", (req, res) => {
         });
 });
 
+app.get("/friends-wannabes", async (req, res) => {
+    try {
+        const { rows } = await findFriendsAndWannabes(req.session.userId);
+        res.json(rows);
+    } catch (err) {
+        console.log(err);
+        res.sendStatus(500);
+    }
+}
+);
+
+app.get("/logout", (req, res) => {
+    req.session = null;
+    res.redirect("/");
+});
+
+
+let socketIdOfRecipient = 201;//for testing testing
+app.post("/friend-request", function(req,res){
+    io.sockets.sockets[socketIdOfRecipient].emit("newFriendRequest");
+});
+
 
 //* is a fallthrough route
 app.get("*", function(req, res) {
@@ -272,6 +313,57 @@ app.get("*", function(req, res) {
     //this code is kicking off the react project
 });
 
-app.listen(port, function() {
+//app.listen(port, function() {
+server.listen(port, function() { // to enable socket.io
     console.log("I'm listening.");
+});
+
+const onlineUsers = {};
+
+io.on("connection", socket =>{
+    console.log(`A socket with the id ${socket.id} just connected`
+    );
+    if (!socket.request.session.userId) {
+        return socket.disconnect(true);
+    }
+
+    const {userId} = socket.request.session;
+    onlineUsers[socket.id] = userId;//idea for online user bonus feature, keep them in an array, integrate it in chat
+//Object.values method, Object.keys, or Object.entries
+
+
+    /*
+    socket.on("iAmHere", data => {
+        console.log(data);
+        socket.emit("good to see you", {
+            message : "you look marvelous"
+        });
+  
+        socket.broadcast.emit("somebodyNew"); //to everybody
+    });
+
+    // we want to get the last 10 chat messages...
+ 
+    */
+   
+    getLastTenChatMessages().then(data=>{
+        // io.sockets.emit("chatMessages", data.rows);
+    });
+
+    socket.on("My amazing chat message", function(msg){
+        console.log("message", msg);
+        io.sockets.emit("new chat message from the server", msg);
+    });
+
+    socket.on("newMessage",function(newMessage){
+        // do stuff in here ....
+        // we want to find out info about user who sent message
+        // we want to emit this message Object
+        // we also want to store it in the DB.
+    });
+
+    socket.on("disconnect", ()=>{
+        delete onlineUsers[socket.io];
+        console.log(`A socket with the id ${socket.id} just disconnected`);
+    });
 });

@@ -20,3 +20,11 @@ CREATE TABLE friendships (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE messages (
+  id SERIAL PRIMARY KEY,
+  created_at timestamp DEFAULT now(),
+  reply_to int REFERENCES messages,
+  content text
+);
+CREATE INDEX ON messages (reply_to, id);
+

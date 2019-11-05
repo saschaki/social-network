@@ -25,12 +25,13 @@ function getUser(id) {
     );
 }
 
-
 function getHashPassword(email) {
-    return db.query("SELECT password As hash FROM users WHERE email = $1", [
-        email
-    ]);
+    return db.query(
+        "SELECT password, id FROM users WHERE email = $1",
+        [email]
+    );
 }
+
 
 function getImage(id) {
     return db.query(`SELECT image FROM users WHERE $1 = id`, [id]);
@@ -132,6 +133,22 @@ function acceptFriendship(myId, otherId){
         WHERE receiver_id = $1 AND sender_id = $2`, [myId, otherId]); 
 }
 
+function findFriendsAndWannabes(id){
+    return db.query(
+        `SELECT users.id, first, last, image, accepted
+        FROM friendships
+        JOIN users
+        ON (accepted = false AND receiver_id = $1 AND sender_id = users.id)
+        OR (accepted = true AND receiver_id = $1 AND sender_id = users.id)
+        OR (accepted = true AND sender_id = $1 AND receiver_id = users.id)`,[id]);
+}
+
+function getLastTenChatMessages(){
+    return db.query(
+        ``,[]);
+}
+
+
 module.exports = {
     addUser,
     getUser,
@@ -146,5 +163,15 @@ module.exports = {
     getFriendshipStatus,
     makeFriendship,
     cancelFriendship,
-    acceptFriendship
+    acceptFriendship,
+    findFriendsAndWannabes,
+    getLastTenChatMessages
 };
+/*
+SELECT users.id, first, last, image, accepted
+        FROM friendships
+        JOIN users
+        ON (accepted = false AND receiver_id = 201 AND sender_id = users.id)
+        OR (accepted = true AND receiver_id = 201 AND sender_id = users.id)
+        OR (accepted = true AND sender_id = 201 AND receiver_id = users.id)
+*/
