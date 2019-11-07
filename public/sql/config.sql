@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS friendships;
+DROP TABLE IF EXISTS messages;
 
 CREATE table users(
     id SERIAL PRIMARY KEY,
@@ -22,9 +23,11 @@ CREATE TABLE friendships (
 
 CREATE TABLE messages (
   id SERIAL PRIMARY KEY,
-  created_at timestamp DEFAULT now(),
+  sender_id INT NOT NULL REFERENCES users(id),
+  receiver_id INT REFERENCES users(id),
   reply_to int REFERENCES messages,
-  content text
+  message VARCHAR,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-CREATE INDEX ON messages (reply_to, id);
+
 

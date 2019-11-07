@@ -7,9 +7,7 @@ import {OtherProfile} from "./otherprofile";
 import Header from "./header";
 import Friends from "./friends";
 import FindPeople from "./find-people";
-import { Link } from "react-router-dom";
-import  Chat  from "./chat";
-//import Friends from "./friends";
+import Chat from "./chat";
 
 export default class App extends React.Component {
     constructor() {
@@ -92,7 +90,7 @@ export default class App extends React.Component {
                             )}
                         /> 
                         <Route
-                            path="/discover"
+                            path="/member"
                             render={props => (
                                 <FindPeople 
                                     image={this.state.image}
@@ -101,8 +99,8 @@ export default class App extends React.Component {
                                     history={props.history}
                                 />
                             )}
-                        />  
-                        <Route exact path="/chat" component = { Chat } />                                                               
+                        />                         
+                        <Route path="/chat" component = { Chat } />  
                         {this.state.uploaderIsVisible && 
                     <Uploader setImage={this.setImage} />
                         }
@@ -112,4 +110,8 @@ export default class App extends React.Component {
            
         );
     }
+
+    
 }
+// bonus features=>
+//cheerio package für wall posts

@@ -3,8 +3,25 @@ const app = express();
 const compression = require("compression"); //compress responses (make them as small as possible)
 const port = 8080;
 //const cookieSession = require("cookie-session");
-const { getHashPassword,addUser, getUser, addImage, editBio, getRecentUsers, getAllUsers, findPeople, getFriendshipStatus, makeFriendship, cancelFriendship, acceptFriendship, findFriendsAndWannabes, getLastTenChatMessages} = require("./db");
-const { hash, auth, compare } = require("./bcrypt");
+const { getHashPassword,
+    addUser,
+    getUser,
+    addImage,
+    editBio,
+    getRecentUsers,
+    getAllUsers,
+    findPeople, 
+    getFriendshipStatus,
+    makeFriendship, 
+    cancelFriendship, 
+    acceptFriendship,
+    findFriendsAndWannabes, 
+    getLastTenChatMessages, 
+    addGlobalMessage,
+    getMessageSender, 
+    getPendingRequests,
+    getOnlineUsers } = require("./db");
+const { hash, compare } = require("./bcrypt");
 const csurf = require("csurf");
 const multer = require("multer");
 const uidSafe = require("uid-safe");
@@ -53,12 +70,13 @@ app.use(
         secret: `${secrets.secret}`,
         maxAge: 1000 * 60 * 60 * 24 * 14
     })
+     secret: `I'm always angry.`,
 );
 */
 //
 const cookieSession = require('cookie-session');
 const cookieSessionMiddleware = cookieSession({
-    secret: `I'm always angry.`,
+    secret: `${secrets.secret}`,
     maxAge: 1000 * 60 * 60 * 24 * 90
 });
 
@@ -195,7 +213,6 @@ app.get("/api/user/:id", async (req, res) => {
 app.get("/users/recent", async (req, res) => {
     try {
         const { rows } = await getRecentUsers(req.session.userId);
-        // console.log(rows);
         res.json(rows);
     } catch (err) {
         console.log(err);
@@ -217,7 +234,6 @@ app.get("/users/all", async (req, res) => {
 
 app.get("/api/users/:input", (req, res) => {
     findPeople(req.session.userId,req.params.input).then(({ rows }) => {
-        //  console.log(rows);
         res.json(rows);
     }).catch(err => {
         console.log("users:input", err);
@@ -226,11 +242,7 @@ app.get("/api/users/:input", (req, res) => {
 });
 
 app.get("/user/:id/status", (req, res) => {
-    //  console.log("session", req.session.userId);
-    //  console.log("params", req.params.id);
-    getFriendshipStatus(req.session.userId,Number(req.params.id)).then(({ rows }) => {
-        // console.log("status rows", rows);
-        // console.log(">>", rows[0]);
+    getFriendshipStatus(req.session.userId,Number(req.params.id)).then(({ rows }) => {   
         if (!rows[0]) {
             res.json({ relation: false });
         } else {
@@ -247,7 +259,7 @@ app.post("/send-fr/:id", (req, res) => {
     makeFriendship(req.session.userId, Number(req.params.id))
         .then(({ data }) => {
             // console.log("makefriendship:", rows);
-            res.json({ relation: true })
+            res.json({ relation: true });
         })
         .catch(err => {
             console.log("makefriend", err);
@@ -279,28 +291,36 @@ app.post("/accept-fr/:id", (req, res) => {
         });
 });
 
-app.get("/friends-wannabes", async (req, res) => {
-    try {
-        const { rows } = await findFriendsAndWannabes(req.session.userId);
-        res.json(rows);
-    } catch (err) {
-        console.log(err);
-        res.sendStatus(500);
-    }
-}
-);
+app.get("/friends-wannabes", (req, res) => {
+    findFriendsAndWannabes(req.session.userId)
+        .then(({ rows }) => {
+            const friendWannabes = rows;
+            return friendWannabes;
+        })
+        .then(friendWannabes => {
+            getPendingRequests(req.session.userId)
+                .then(({ rows }) => {
+                    res.json({ friendWannabes, rows });
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.sendStatus(500);
+                });
+        });
+});
+
+app.get("/friends-pending", (req, res) => {
+    getPendingRequests(req.session.userId)
+        .then(({ rows }) => {
+            res.json(rows);
+        })
+        .catch(err => console.log(err));
+});
 
 app.get("/logout", (req, res) => {
     req.session = null;
     res.redirect("/");
 });
-
-
-let socketIdOfRecipient = 201;//for testing testing
-app.post("/friend-request", function(req,res){
-    io.sockets.sockets[socketIdOfRecipient].emit("newFriendRequest");
-});
-
 
 //* is a fallthrough route
 app.get("*", function(req, res) {
@@ -315,55 +335,57 @@ app.get("*", function(req, res) {
 
 //app.listen(port, function() {
 server.listen(port, function() { // to enable socket.io
-    console.log("I'm listening.");
+    console.log("I'm listening on port ", port);
 });
-
+//socket events
 const onlineUsers = {};
-
-io.on("connection", socket =>{
-    console.log(`A socket with the id ${socket.id} just connected`
+io.on("connection", socket=> {  
+    console.log(`A socket with the id ${socket.id} just connected > ${socket.request.session.userId}`
+  
     );
+      
+    //io.emit('onlineUsers', users);
+  
     if (!socket.request.session.userId) {
         return socket.disconnect(true);
     }
 
-    const {userId} = socket.request.session;
-    onlineUsers[socket.id] = userId;//idea for online user bonus feature, keep them in an array, integrate it in chat
-//Object.values method, Object.keys, or Object.entries
+    let userId = socket.request.session.userId;
 
-
-    /*
-    socket.on("iAmHere", data => {
-        console.log(data);
-        socket.emit("good to see you", {
-            message : "you look marvelous"
-        });
-  
-        socket.broadcast.emit("somebodyNew"); //to everybody
-    });
-
-    // we want to get the last 10 chat messages...
- 
-    */
+    onlineUsers[socket.id] = userId;
+    getUser(userId).then(({ rows }) => {
+   console.log("user", rows);
+     
+    },
    
-    getLastTenChatMessages().then(data=>{
-        // io.sockets.emit("chatMessages", data.rows);
+    //let uniqueUsersOnline =  [...new Set(Object.values(onlineUsers))];
+    getOnlineUsers(Object.values(onlineUsers),userId).then(({ rows }) => {
+        console.log("uniqueusers", rows),
+        io.sockets.emit("onlineUsers", rows);
     });
 
-    socket.on("My amazing chat message", function(msg){
-        console.log("message", msg);
-        io.sockets.emit("new chat message from the server", msg);
+    getLastTenChatMessages().then(({ rows }) => {
+        io.sockets.emit("getLastTenChatMessages", rows);
     });
 
-    socket.on("newMessage",function(newMessage){
-        // do stuff in here ....
-        // we want to find out info about user who sent message
-        // we want to emit this message Object
-        // we also want to store it in the DB.
+    socket.on("newMessage", async function(newMessage) {
+        await addGlobalMessage(newMessage, userId);
+        const { rows } = await getMessageSender(userId);
+        // io.sockets.emit("newMessage", rows);
+        io.emit("newMessage", rows);//send to all clients, include sender
     });
 
     socket.on("disconnect", ()=>{
         delete onlineUsers[socket.io];
         console.log(`A socket with the id ${socket.id} just disconnected`);
     });
+
+    socket.on('reconnect_error', () => {
+        console.log('attempt to reconnect has failed');
+    });
+ 
 });
+
+
+
+

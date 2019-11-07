@@ -39,13 +39,12 @@ export class OtherProfile extends React.Component {
     render() {    
         return (               
             <React.Fragment>
-                <h1>Other Profile</h1>
                 <div className="otherprofile">
-                    <img className="otherprofileimg" src={this.state.image || "/img/default.png"} title={this.state.first+ " " +this.state.last}/>
-                </div>
-                <p>Name: {this.state.first} {this.state.last}</p>
-                <p>{this.state.bio}</p> 
-                <FriendButton id={this.props.match.params.id}/>           
+                    <h1> {this.state.first} {this.state.last}</h1>             
+                    <img className="otherprofileimg" src={this.state.image || "/img/default.png"} title={this.state.first+ " " +this.state.last}/>             
+                    <p>{this.state.bio}</p>         
+                    <FriendButton id={this.props.match.params.id}/> 
+                </div>          
             </React.Fragment> 
                
         );

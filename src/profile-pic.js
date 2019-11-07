@@ -8,14 +8,14 @@ export default function ProfilePic({ image, showUploader, first, last }) {
 
     return (
         <React.Fragment>
-            <div className="profile-pic-container">         
+            <div className="profile-pic-container">  
+                <h1>{first} {last}</h1>          
                 <img
                     src={image}
                     className="profile-pic"
                     onClick={showUploader}
                     onError={e=>handleError(e)}
-                />
-                <span>{first} {last}</span>               
+                />                        
             </div>
         </React.Fragment>
     );

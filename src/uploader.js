@@ -25,23 +25,25 @@ export default class Uploader extends React.Component {
     render() {
         return (
             <React.Fragment>
-                <input
-                    id="file"
-                    type="file"
-                    accept="image/*"
-                    onChange={e => {
-                        this.setState({ file: e.target.files[0] });
-                    }}
-                    className="chose-file-btn"
-                />
-                <button
-                    onClick={() => this.upload()}
-                    type="submit"
-                    name="upload-btn"
-                    className="uploadbtn"
-                >
+                <div className="uploader">
+                    <input
+                        id="file"
+                        type="file"
+                        accept="image/*"
+                        onChange={e => {
+                            this.setState({ file: e.target.files[0] });
+                        }}
+                        className="chose-file-btn"
+                    />
+                    <button
+                        onClick={() => this.upload()}
+                        type="submit"
+                        name="upload-btn"
+                        className="uploadbtn"
+                    >
                     Upload
-                </button>
+                    </button>
+                </div>
             </React.Fragment>
         );
     }

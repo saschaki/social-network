@@ -4,9 +4,48 @@
     padding: 0;
 }
 
+html {
+    -webkit-font-smoothing: antialiased;
+  }
+
+  html, textarea, input {
+    font-family:
+      "HelveticaNeue-Light",
+      "Helvetica Neue Light",
+      "Helvetica Neue",
+      Helvetica,
+      Arial,
+      "Lucida Grande",
+      sans-serif;
+  }
+
 body,
 html {
-    height: vh;
+    height: 100%;
+}
+
+.noscript{
+color:red;
+position:absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+}
+
+.inputMessage {
+    display:block;
+    border: 1px solid grey;
+    z-index:3;
+    border-radius: 15px;
+    bottom: 0;
+    height: 40px;
+    left: 0;
+    outline: none;
+    margin-top: 50px;
+    position: absolute;
+    right: 0;
+    width: 100%;
+    background-color:lightgrey;
 }
 
 .header{
@@ -30,33 +69,149 @@ html {
 .header #self{
     position: absolute;
     top: 10px;
-    right: 10px;
+    right: 20px;
     height: 50px;
     width: 50px;
+    border:1px solid black;
 }
 
+.profile{
+    left:40%;
+}
 
+.header .headerlinks{
+    display:flex;
+    flex-direction: row;
+    position:absolute;
+    right: 100px;
+    bottom:0px;
+}
+
+.headerlinks div {
+    background-color: orange;
+    margin-right:5px;
+}
+
+.headerlinks div :hover{ 
+    background-color:black;
+    color:white;  
+}
+
+.active{
+    background-color:darkred;
+    color:white;
+    padding:5px;
+}
 
 .app {
     display:grid;
     width:100vw;
     height: 90vh;
     position: absolute;
-    text-align: center;
+    /*
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);*/
+}
+
+.chat {
+    position:absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-45%, -50%);
+}
+
+.chat h1 {
+    margin-bottom: 30px;
 }
 
 .chat-container {
-    height: 300px;
+    position:relative;
+    height: 400px;
     overflow-y : scroll;
+    margin-bottom:50px;
+  
 }
 
-img.profile-pic-container{
-  
-  
+.chat-img{
+  width:30px;
+  height:30px;
+  border: 1px solid black;
+  margin:2px;
 }
+
+.online{
+    display: flex;
+    flex-direction: row;
+    padding:20px;
+    vertical-align: middle;
+}
+
+.online img {
+  top:0;
+}
+
+.chat-message-container{
+    display:flex;
+    flex-direction: row;
+    padding:10px;
+
+}
+
+.chat-message-container .chat-message-column{
+flex-direction: column;
+}
+
+.chat-message-container img{
+text-align: left;
+}
+
+.chat-message-container span{
+    font-size:10px;
+    vertical-align: top;
+    }
+
+.chat-message-container p{
+background-color: lightblue;
+border-radius: 5px;
+padding:5px;
+    }
+
+.friends-container{
+    position:relative;
+    top: 50%;
+    left: 40%;
+    transform: translate(0%, -40%);
+}
+.uploader{
+    position:relative;
+    top: 50%;
+    left: 40%;
+    transform: translate(0%, -40%);
+}
+
+.otherprofile{
+    position:relative;
+    top: 50%;
+    left: 40%;
+    transform: translate(0%, -40%);
+}
+
+.friends, .wannabe {  
+    border-bottom: 1px solid orange;
+    width: 20vw;
+    padding:20px;
+}
+
+.member-container{
+    margin-top: 100px;
+    height: 400px;
+    overflow-y : scroll;
+    position:absolute;
+    top: 25%;
+    left: 50%;
+    transform: translate(-25%, -50%);
+}  
 
 img.otherprofile {
     text-align:center;
@@ -69,20 +224,25 @@ img.otherprofile {
 }
 
 img.profile-pic{
+    height: 350px;
+    width: auto; 
     border: 5px solid black;
-    vertical-align: middle;
+
 }
 
 
 .profile {
-    position: relative;
-    padding: 10px;
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .recentUsers{
     display: flex;
     flex-direction:column;
 }
+
 .recentUsers img{
     vertical-align: middle;
     }
@@ -172,6 +332,24 @@ img:hover {
     background: black;
 }
 
+
+
+.input-container input:focus {
+    /* Chrome, Firefox, Opera, Safari 10.1+ */
+    opacity: 1; /* Firefox */
+    background: white;
+    color: black;
+}
+
+.input-container input:focus::placeholder {
+    /* Chrome, Firefox, Opera, Safari 10.1+ */
+    opacity: 1; /* Firefox */
+    color: black;
+    background: white;
+}
+
+textarea, select, input, button { outline: none; }
+
 input {
     width: 60vw;
     height: 5vh;
@@ -192,6 +370,8 @@ input {
     transform: scale(1.05);
 }
 
+
+
 .register-button {
     position: relative;
     background-color: grey;
@@ -209,6 +389,7 @@ button:focus {
     background: black;
     color: white;
     outline: 0;
+    cursor:pointer;
 }
 
 .profile-pic {
@@ -254,7 +435,7 @@ textarea:focus {
 }
 
 .profile-pic-container {
-    justify-content: flex-end;
+ margin-top: 50px;
 }
 
 .navbar {
@@ -267,4 +448,9 @@ textarea:focus {
 a {
     text-decoration: none;
     color:black;
+}
+
+.flex-row{
+    display:flex;
+    flex-direction:row;
 }

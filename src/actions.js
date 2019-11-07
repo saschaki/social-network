@@ -1,11 +1,11 @@
-  
 import axios from "./axios";
 
 export async function findFriendsAndWannabes() {
     const { data } = await axios.get("/friends-wannabes");
     return {
         type: "GET_FRIENDS",
-        users: data
+        users: data.friendWannabes,
+        pending: data.rows
     };
 }
 
@@ -24,3 +24,27 @@ export async function cancelFriendship(id) {
         id
     };
 }
+
+export async function getLastTenChatMessages(msgs) {
+    return {
+        type: "CHAT",
+        messages: msgs
+    };
+}
+
+export async function newMessage(msg) {
+    return {
+        type: "NEW",
+        message: msg
+    };
+}
+
+export async function onlineUsers(usr) {
+
+    return {
+        type: 'ONLINE_USERS',
+        onlineUsers: usr
+    };
+} 
+
+

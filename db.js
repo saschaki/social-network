@@ -92,6 +92,18 @@ function getAllUsers() {
     return db.query("SELECT id,first,last,image FROM users");
 }
 
+function getPendingRequests(id) {
+    return db.query(
+        `
+        SELECT users.id, first, last, image, accepted
+        FROM friendships
+        JOIN users
+        ON (accepted = false AND sender_id = $1 AND receiver_id = users.id)
+        `,
+        [id]
+    );
+}
+
 function findPeople(id,input){
     return db.query(
         `
@@ -145,9 +157,50 @@ function findFriendsAndWannabes(id){
 
 function getLastTenChatMessages(){
     return db.query(
-        ``,[]);
+        `
+            SELECT users.id, first, last, image, message, messages.created_at, messages.id 
+            FROM messages
+            JOIN users
+            ON (sender_id = users.id)
+            ORDER BY messages.id DESC LIMIT 10
+            `);
 }
 
+function addGlobalMessage(message, id) {
+    return db.query(
+        `
+        INSERT INTO messages (message, sender_id, receiver_id)
+        VALUES ($1, $2, null)
+        `,
+        [message, id]
+    );
+}
+
+function getMessageSender(id) {
+    return db.query(
+        `
+        SELECT first, last, image, message, messages.created_at
+        FROM messages
+        JOIN users
+        ON (sender_id = $1 AND sender_id = users.id)
+        ORDER BY messages.id DESC
+        LIMIT 1
+        `,
+        [id]
+    );
+}
+
+function getOnlineUsers(ids,id){
+    return db.query(
+        `
+        SELECT id, image, first, last
+        FROM users
+        WHERE (id = ANY($1))
+        AND id != $2;
+        `,
+        [ids,id]
+    );
+};
 
 module.exports = {
     addUser,
@@ -165,13 +218,9 @@ module.exports = {
     cancelFriendship,
     acceptFriendship,
     findFriendsAndWannabes,
-    getLastTenChatMessages
+    getLastTenChatMessages,
+    addGlobalMessage,
+    getMessageSender,
+    getPendingRequests,
+    getOnlineUsers  
 };
-/*
-SELECT users.id, first, last, image, accepted
-        FROM friendships
-        JOIN users
-        ON (accepted = false AND receiver_id = 201 AND sender_id = users.id)
-        OR (accepted = true AND receiver_id = 201 AND sender_id = users.id)
-        OR (accepted = true AND sender_id = 201 AND receiver_id = users.id)
-*/

@@ -34,7 +34,7 @@ export default function FindPeople() {
     }, [userInput]);
 
     return(
-        <div>       
+        <div className="member-container">       
             <p>Are you looking for someone in particular ?</p>   
             <div className="finderInput">
                 <input

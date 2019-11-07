@@ -9,21 +9,16 @@ import reduxPromise from 'redux-promise';
 import { reducer } from './reducer';
 import {Provider} from 'react-redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import * as io from "socket.io-client";
 import {init} from "./socket";
 
-const socket = io.connect();
-
-socket.emit("iAmHere"),{
-    message:"hello"
-};
+//const socket = io.connect();
 
 const store = createStore(reducer, composeWithDevTools(applyMiddleware(reduxPromise)));
 
 let elem;
 const userIsLoggedIn = location.pathname != "/welcome";
 //if (location.pathname == "/welcome")
-if (!userIsLoggedIn) {
+if (!userIsLoggedIn ||location.pathname == "/welcome") {
     elem = <Welcome />;
 } else {
     init(store);
