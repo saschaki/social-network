@@ -11,7 +11,7 @@ React-based authenticated social network featuring friending and chat functional
  ▪ Protection against CSURF and SQL injection attacks</br>
  ▪ Error handling</br>
 
-**Tech**
+**Tech**</br>
  ▪ Node</br>
  ▪ Express</br>
  ▪ React</br>
